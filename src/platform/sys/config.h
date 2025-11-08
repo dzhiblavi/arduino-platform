@@ -1,0 +1,22 @@
+#pragma once
+
+#if defined(ARDUINO_ARCH_AVR)
+
+#define PLATFORM_ARDUINO
+#define PLATFORM_ARDUINO_AVR
+
+#define PLATFORM_RAM
+
+#elif defined(ARDUINO_ARCH_ESP8266)
+
+#define PLATFORM_ARDUINO
+#define PLATFORM_ARDUINO_ESP8266
+
+#define PLATFORM_RAM IRAM_ATTR
+
+#else
+
+#define PLATFORM_NATIVE
+#define PLATFORM_RAM
+
+#endif
