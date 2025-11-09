@@ -2,7 +2,7 @@
 
 #if defined(ARDUINO_AVR_NANO)
 
-#include "platform/hal/pin/platforms/arduino/make.h"
+#include "platform/hal/pin/frameworks/arduino/make.h"
 
 namespace platform {
 

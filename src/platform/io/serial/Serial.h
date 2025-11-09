@@ -4,10 +4,10 @@
 
 #if defined(PLATFORM_NATIVE)
 
-#include "platform/io/serial/platforms/native.h"  // IWYU pragma: keep
+#include "platform/io/serial/frameworks/native.h"  // IWYU pragma: keep
 
 #elif defined(PLATFORM_ARDUINO)
 
-#include "platform/io/serial/platforms/arduino.h"  // IWYU pragma: keep
+#include "platform/io/serial/frameworks/arduino.h"  // IWYU pragma: keep
 
 #endif

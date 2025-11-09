@@ -2,7 +2,7 @@
 
 #if defined(ARDUINO_ESP8266_WEMOS_D1MINI)
 
-#include "platform/hal/pin/platforms/arduino/make.h"
+#include "platform/hal/pin/frameworks/arduino/make.h"
 
 namespace platform {
 

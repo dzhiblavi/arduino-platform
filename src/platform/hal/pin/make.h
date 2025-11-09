@@ -4,6 +4,6 @@
 
 #if defined(PLATFORM_ARDUINO)
 
-#include "platform/hal/pin/platforms/arduino/make.h"  // IWYU pragma: keep
+#include "platform/hal/pin/frameworks/arduino/make.h"  // IWYU pragma: keep
 
 #endif

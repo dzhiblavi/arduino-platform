@@ -4,7 +4,7 @@
 
 #if defined(PLATFORM_ARDUINO)
 
-#include "platform/hal/int/platforms/arduino/mode.h"
+#include "platform/hal/int/frameworks/arduino/mode.h"
 
 #include "platform/hal/int/type.h"
 
