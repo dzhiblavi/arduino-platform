@@ -12,6 +12,7 @@
 #include <supp/verify.h>
 
 #include <Arduino.h>
+#include <gio/gio_avr.h>
 
 #include <concepts>
 
@@ -25,7 +26,7 @@ struct Pin {
 
     template <GPIOMode Mode>
     struct DIOBase : Base {
-        void init() const { pinMode(P, platform::native(Mode)); }
+        void init() const { gio::init(P, platform::native(Mode)); }
         constexpr platform::GPIOMode mode() const { return Mode; }
 
         template <IOCaps X = C>
@@ -38,8 +39,8 @@ struct Pin {
     template <GPIOMode Mode>
     requires(C.dio && isDigitalOutput(Mode))
     struct Output : DIOBase<Mode> {
-        void set() const { digitalWrite(P, HIGH); }
-        void clear() const { digitalWrite(P, LOW); }
+        void set() const { gio::high(P); }
+        void clear() const { gio::low(P); }
 
         template <IOCaps X = C>
         requires(X.pwm)
@@ -51,7 +52,7 @@ struct Pin {
     template <GPIOMode Mode>
     requires(C.dio && isDigitalInput(Mode))
     struct Input : DIOBase<Mode> {
-        int read() const { return digitalRead(P); }
+        int read() const { return gio::read(P); }
     };
 
     template <IOCaps X = C>
