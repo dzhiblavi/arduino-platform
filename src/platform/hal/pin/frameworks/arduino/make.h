@@ -20,6 +20,7 @@ template <uint8_t P, IOCaps C>
 struct Pin {
     struct Base {
         constexpr uint8_t native() const { return P; }
+        constexpr IOCaps capabilities() const { return C; }
     };
 
     template <GPIOMode Mode>

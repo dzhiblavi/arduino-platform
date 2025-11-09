@@ -1,6 +1,7 @@
 #pragma once
 
 #include "platform/hal/int/type.h"
+#include "platform/hal/pin/capability.h"
 #include "platform/hal/pin/mode.h"
 
 #include <concepts>
@@ -10,6 +11,7 @@ namespace platform::type {
 
 template <typename T>
 concept Pin = requires(T pin) {
+    { pin.capabilities() } -> std::same_as<IOCaps>;
     { pin.init() } -> std::same_as<void>;
     { pin.native() } -> std::same_as<uint8_t>;
 };
