@@ -77,6 +77,6 @@ struct IOStream : public Stream {
     termios t_orig_{};
 };
 
-}  // namespace platform
-
 inline platform::IOStream Serial;
+
+}  // namespace platform

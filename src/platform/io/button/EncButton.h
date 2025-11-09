@@ -4,13 +4,9 @@
 
 #ifdef PLATFORM_ARDUINO
 
+#include "platform/Callback.h"
+#include "platform/hal/pin/type.h"
 #include "platform/io/button/ButtonLevel.h"
-#include "platform/io/int/interrupts.h"
-#include "platform/io/pin/type.h"
-
-#include <exec/Callback.h>
-#include <exec/os/OS.h>
-#include <exec/os/Service.h>
 
 // #define EB_NO_CALLBACK // THIS ENABLES BUGS IN THE LIBRARY
 #include <EncButton.h>
@@ -22,28 +18,22 @@ template <
     type::InterruptPin S2,
     type::DigitalInputPin Btn,
     ButtonLevel Level = ButtonLevel::Low>
-class EncButton : public exec::Service {
+class EncButton {
  public:
     static_assert(S1{}.mode() == S2{}.mode(), "both S encoder pins must have the same mode");
 
-    using ImplType = ::EncButton;
+    using ImplType = ::EncButtonT<S1{}.native(), S2{}.native(), Btn{}.native()>;
     using CallbackArgType = ImplType&;
-    using CallbackType = exec::Callback<CallbackArgType>;
+    using CallbackType = Callback<CallbackArgType>;
 
-    EncButton() { exec::OS::globalAddService(this); }
+    EncButton() = default;
 
     bool init() {
-        S1 s1;
-        S2 s2;
-        Btn btn;
+        constexpr S1 s1;
+        constexpr S2 s2;
+        constexpr Btn btn;
 
-        impl_.init(
-            s1.native(),
-            s2.native(),
-            btn.native(),
-            native(s1.mode()),
-            native(btn.mode()),
-            native(Level));
+        impl_.init(native(s1.mode()), native(btn.mode()), native(Level));
         impl_.setEncISR(true);
 
         attachInterruptArg(s1.interrupt(), EncButton::encISR, this, InterruptMode::Change);
@@ -59,8 +49,7 @@ class EncButton : public exec::Service {
 
     ImplType& impl() { return impl_; }
 
-    // Service
-    void tick() override {
+    void tick() {
         impl_.tick();
 
         if (callback_ != nullptr && impl_.action()) {

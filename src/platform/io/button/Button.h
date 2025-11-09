@@ -4,13 +4,10 @@
 
 #ifdef PLATFORM_ARDUINO
 
+#include "platform/Callback.h"
+#include "platform/Singleton.h"
+#include "platform/hal/pin/type.h"
 #include "platform/io/button/ButtonLevel.h"
-#include "platform/io/int/interrupts.h"
-#include "platform/io/pin/type.h"
-
-#include <exec/Callback.h>
-#include <exec/os/OS.h>
-#include <exec/os/Service.h>
 
 // #define EB_NO_CALLBACK // THIS ENABLES BUGS IN THE LIBRARY
 #include <EncButton.h>
@@ -18,18 +15,18 @@
 namespace platform {
 
 template <type::InterruptPin Pin, ButtonLevel Level>
-class Button : public exec::Service {
+class Button : public Singleton<Button<Pin, Level>> {
  public:
-    using ImplType = ::Button;
+    using ImplType = ::ButtonT<Pin{}.native()>;
     using CallbackArgType = ImplType&;
-    using CallbackType = exec::Callback<CallbackArgType>;
+    using CallbackType = Callback<CallbackArgType>;
 
-    Button() { exec::OS::globalAddService(this); }
+    Button() = default;
 
     bool init() {
-        Pin pin;
-        impl_.init(pin.native(), native(pin.mode()), native(Level));
-        attachInterruptArg(pin.interrupt(), Button::buttonISR, this, interruptMode(Level));
+        constexpr Pin pin;
+        impl_.init(native(pin.mode()), native(Level));
+        pin.interrupt().attach(Button::buttonISR, interruptMode(Level));
         return true;
     }
 
@@ -37,8 +34,7 @@ class Button : public exec::Service {
 
     ImplType& impl() { return impl_; }
 
-    // Service
-    void tick() override {
+    void tick() {
         impl_.tick();
 
         if (callback_ != nullptr && impl_.action()) {
@@ -47,7 +43,7 @@ class Button : public exec::Service {
     }
 
  private:
-    static void PLATFORM_RAM buttonISR(void* self) { static_cast<Button*>(self)->impl_.pressISR(); }
+    static void PLATFORM_RAM buttonISR() { Button::instance().impl_.pressISR(); }
 
     ImplType impl_;
     CallbackType* callback_ = nullptr;

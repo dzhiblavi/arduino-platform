@@ -1,6 +1,7 @@
 #pragma once
 
-#include "platform/io/pin/mode.h"
+#include "platform/hal/int/type.h"
+#include "platform/hal/pin/mode.h"
 
 #include <concepts>
 #include <cstdint>
@@ -35,7 +36,7 @@ concept DigitalInputPin = requires(T pin) {
 template <typename T>
 concept InterruptPin = requires(T pin) {
     requires DigitalInputPin<T>;
-    { pin.interrupt() } -> std::same_as<uint8_t>;
+    { pin.interrupt() } -> Interrupt;
 };
 
 template <typename T>

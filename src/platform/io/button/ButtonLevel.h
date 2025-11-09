@@ -4,7 +4,7 @@
 
 #if defined(PLATFORM_ARDUINO)
 
-#include "platform/io/int/interrupts.h"
+#include "platform/hal/int/mode.h"
 
 #include <Arduino.h>
 
