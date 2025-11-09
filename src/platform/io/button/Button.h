@@ -33,10 +33,13 @@ class Button : public VirtButton, public Singleton<Button<Pin, Level>> {
     }
 
  private:
-    static void PLATFORM_RAM buttonISR() { Button::instance().pressISR(); }
+    static void buttonISR() { Button::instance().pressISR(); }
 
     CallbackType* callback_ = nullptr;
     [[no_unique_address]] const Pin pin{};
 };
+
+#define PLATFORM_BUTTON_ISR(Pin, Level) \
+    template PLATFORM_ISR void ::platform::Button<Pin, Level>::buttonISR()
 
 }  // namespace platform

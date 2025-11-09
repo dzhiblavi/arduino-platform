@@ -46,8 +46,8 @@ class EncButton : public VirtEncButton, public Singleton<EncButton<S1, S2, Btn, 
     }
 
  private:
-    static void PLATFORM_RAM encISR() { EncButton::instance().tickISR(); }
-    static void PLATFORM_RAM btnISR() { EncButton::instance().pressISR(); }
+    static void encISR() { EncButton::instance().tickISR(S1().read(), S2().read()); }
+    static void btnISR() { EncButton::instance().pressISR(); }
 
     CallbackType* callback_ = nullptr;
     [[no_unique_address]] const S1 s1{};
@@ -56,3 +56,7 @@ class EncButton : public VirtEncButton, public Singleton<EncButton<S1, S2, Btn, 
 };
 
 }  // namespace platform
+
+#define PLATFORM_ENC_BUTTON_ISR(S1, S2, Btn, ...)                                          \
+    template PLATFORM_ISR void ::platform::EncButton<S1, S2, Btn, ##__VA_ARGS__>::encISR(); \
+    template PLATFORM_ISR void ::platform::EncButton<S1, S2, Btn, ##__VA_ARGS__>::btnISR()
