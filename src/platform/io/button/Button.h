@@ -1,6 +1,5 @@
 #pragma once
 
-#include "platform/Callback.h"
 #include "platform/Singleton.h"
 #include "platform/hal/pin/type.h"
 #include "platform/io/button/ButtonLevel.h"
@@ -94,9 +93,6 @@ struct ButtonSM {
 template <type::InterruptPin Pin, ButtonSettings S = {}>
 class Button : sm::ButtonSM, public Singleton<Button<Pin, S>> {
  public:
-    using CallbackArgType = Button&;
-    using CallbackType = Callback<CallbackArgType>;
-
     Button() = default;
 
     void init() {
@@ -110,13 +106,7 @@ class Button : sm::ButtonSM, public Singleton<Button<Pin, S>> {
         } else {
             poll(!pin.read(), S);
         }
-
-        if (event() != ButtonEvent::None && callback_) {
-            callback_->run(*this);
-        }
     }
-
-    void setCallback(CallbackType* callback) { callback_ = callback; }
 
     using sm::ButtonSM::clicks;
     using sm::ButtonSM::event;
@@ -124,7 +114,6 @@ class Button : sm::ButtonSM, public Singleton<Button<Pin, S>> {
  private:
     static void buttonISR() { Button::instance().isr(); }
 
-    CallbackType* callback_ = nullptr;
     [[no_unique_address]] const Pin pin{};
 };
 
