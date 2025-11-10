@@ -5,6 +5,9 @@
 
 namespace platform {
 
-struct EncButtonSettings : ButtonSettings, EncoderSettings {};
+struct EncButtonSettings {
+    ButtonSettings button{};
+    EncoderSettings encoder{};
+};
 
 }  // namespace platform

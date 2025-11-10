@@ -78,6 +78,25 @@ void ButtonSM::poll(bool engaged, const ButtonSettings& settings) {
     }
 }
 
+ButtonState ButtonSM::state() const {
+    switch (state_ & StateMask) {
+        case Idle:
+            return ButtonState::Idle;
+        case PressDebounce:
+            return ButtonState::Pressing;
+        case ReleaseDebounce:
+            return ButtonState::Waiting;
+        case Pressing:
+            return ButtonState::Pressing;
+        case Holding:
+            return ButtonState::Holding;
+        case Waiting:
+            return ButtonState::Waiting;
+    }
+
+    __builtin_unreachable();
+}
+
 SUPP_INLINE void ButtonSM::clearEvent() {
     state_ = State(state_ & ~EventMask);
 }

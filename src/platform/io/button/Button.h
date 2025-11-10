@@ -20,6 +20,13 @@ enum class [[nodiscard]] ButtonEvent : uint8_t {  // 3 bits
 };
 // clang-format on
 
+enum class [[nodiscard]] ButtonState : uint8_t {
+    Idle = 1 << 0,
+    Waiting = 1 << 1,
+    Pressing = 1 << 2,
+    Holding = Pressing | 1 << 3,
+};
+
 constexpr const char* toString(ButtonEvent event) {
     switch (event) {
         case ButtonEvent::None:
@@ -39,6 +46,22 @@ constexpr const char* toString(ButtonEvent event) {
     __builtin_unreachable();
 }
 
+constexpr const char* toString(ButtonState state) {
+    switch (state) {
+        case ButtonState::Idle:
+            return "Idle";
+        case ButtonState::Waiting:
+            return "Waiting";
+        case ButtonState::Pressing:
+            return "Pressing";
+        case ButtonState::Holding:
+            return "Holding";
+            break;
+    }
+
+    __builtin_unreachable();
+}
+
 namespace sm {
 
 struct ButtonSM {
@@ -49,7 +72,10 @@ struct ButtonSM {
     uint8_t clicks() const { return clicks_; }
 
     // The event that happened (reset on tick())
-    ButtonEvent event() { return static_cast<ButtonEvent>(state_ & EventMask); }
+    SUPP_INLINE ButtonEvent event() { return static_cast<ButtonEvent>(state_ & EventMask); }
+
+    // Current button state mask
+    ButtonState state() const;
 
  protected:
     SUPP_INLINE void isr() { state_ = State(state_ | ISRMask); }
@@ -83,14 +109,17 @@ struct ButtonSM {
 
 }  // namespace sm
 
-template <type::InterruptPin Pin, ButtonSettings S = {}>
+template <type::DigitalInputPin Pin, ButtonSettings S = {}>
 class Button : sm::ButtonSM, public Singleton<Button<Pin, S>> {
  public:
     Button() = default;
 
     void init() {
         pin.init();
-        pin.interrupt().attach(Button::buttonISR, interruptMode(S.level));
+
+        if constexpr (type::InterruptPin<Pin>) {
+            pin.interrupt().attach(Button::buttonISR, interruptMode(S.level));
+        }
     }
 
     void tick() {
@@ -103,6 +132,7 @@ class Button : sm::ButtonSM, public Singleton<Button<Pin, S>> {
 
     using sm::ButtonSM::clicks;
     using sm::ButtonSM::event;
+    using sm::ButtonSM::state;
 
  private:
     static void buttonISR() { Button::instance().isr(); }
