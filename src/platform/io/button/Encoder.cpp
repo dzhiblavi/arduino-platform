@@ -4,20 +4,33 @@ namespace platform {
 
 namespace sm {
 
-int8_t EncoderSM::tick() {
+void EncoderSM::tick() {
     switch (s & Isr) {
         case 0b0:
             if (s & Turn) {
                 s &= ~Turn;
             }
-            return 0;
+            break;
         case Isr:
             s &= ~Isr;
             s |= Turn;
-            return (s & Dir) ? +1 : -1;
+            break;
+    }
+}
+
+EncoderEvent EncoderSM::event() const {
+    switch (s & (Turn | Dir)) {
+        case 0b0 | 0b0:
+            return EncoderEvent::None;
+
+        case Turn | 0b0:
+            return EncoderEvent::TurnLeft;
+
+        case Turn | Dir:
+            return EncoderEvent::TurnRight;
     }
 
-    return 0;
+    return EncoderEvent::None;
 }
 
 void EncoderSM::tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e) {
@@ -31,8 +44,8 @@ void EncoderSM::tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e) {
 }
 
 int8_t EncoderSM::poll(uint8_t e0, uint8_t e1, const EncoderSettings& S) {
-    uint8_t p0 = s & P0;
-    uint8_t p1 = (s & P1) >> 1;
+    const uint8_t p0 = s & P0;
+    const uint8_t p1 = (s & P1) >> 1;
 
     if ((p0 ^ p1 ^ e0 ^ e1) == 0b0) {
         return 0;
@@ -68,7 +81,7 @@ int8_t EncoderSM::poll(uint8_t e0, uint8_t e1, const EncoderSettings& S) {
 
     int8_t result = pos > 0 ? -1 : +1;
     pos = 0;
-    counter_ += result;  // NOLINT
+    counter_ = counter_ + result;  // NOLINT
     return result;
 }
 

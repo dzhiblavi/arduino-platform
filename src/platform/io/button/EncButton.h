@@ -21,14 +21,17 @@ class EncButton : public Encoder<S1, S2, S.encoder>, public Button<Btn, S.button
         Button<Btn, S.button>::init();
     }
 
-    int8_t tick() {
+    void tick() {
         Button<Btn, S.button>::tick();
-        return Encoder<S1, S2, S.encoder>::tick();
+        Encoder<S1, S2, S.encoder>::tick();
     }
+
+    SUPP_INLINE EncoderEvent encEvent() const { return Encoder<S1, S2, S.encoder>::event(); }
+    SUPP_INLINE EncoderEvent buttonEvent() const { return Button<Btn, S.button>::event(); }
 };
 
 }  // namespace platform
 
 #define PLATFORM_ENC_BUTTON_ISR(S1, S2, Btn, S) \
-    PLATFORM_ENCODER_ISR(S1, S2, S.encoder);  \
+    PLATFORM_ENCODER_ISR(S1, S2, S.encoder);    \
     PLATFORM_BUTTON_ISR(Btn, S.button)

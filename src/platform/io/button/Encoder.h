@@ -8,14 +8,22 @@
 
 namespace platform {
 
+enum class EncoderEvent : uint8_t {
+    None,
+    TurnLeft,
+    TurnRight,
+};
+
 namespace sm {
 
 struct EncoderSM {
  public:
-    int8_t tick();
-    SUPP_INLINE bool turning() const { return s & Turn; }
-    SUPP_INLINE bool direction() const { return s & Dir; }
-    SUPP_INLINE int8_t counter() const { return counter_; }
+    void tick();
+
+    EncoderEvent event() const;
+    bool turning() const { return s & Turn; }
+    bool direction() const { return s & Dir; }
+    int8_t counter() const { return counter_; }
 
  protected:
     void tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e);

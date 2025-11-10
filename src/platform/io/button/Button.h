@@ -28,16 +28,12 @@ struct ButtonSM {
  public:
     void poll(bool engaged, const ButtonSettings& settings);
 
-    // The number of clicks preceding the event
+    ButtonEvent event() const { return static_cast<ButtonEvent>(state_ & EventMask); }
     uint8_t clicks() const { return clicks_; }
-
-    // The event that happened (reset on tick())
-    SUPP_INLINE ButtonEvent event() const { return static_cast<ButtonEvent>(state_ & EventMask); }
-
     bool busy() const;
-    bool pressing() const;
     bool holding() const;
     bool waiting() const;
+    bool pressing() const;
 
  protected:
     SUPP_INLINE void isr() { state_ = State(state_ | ISRMask); }
