@@ -13,9 +13,9 @@ namespace sm {
 struct EncoderSM {
  public:
     int8_t tick();
-    SUPP_INLINE bool turning() { return s & Turn; }
-    SUPP_INLINE bool direction() { return s & Dir; }
-    SUPP_INLINE int8_t counter() { return counter_; }
+    SUPP_INLINE bool turning() const { return s & Turn; }
+    SUPP_INLINE bool direction() const { return s & Dir; }
+    SUPP_INLINE int8_t counter() const { return counter_; }
 
  protected:
     void tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e);

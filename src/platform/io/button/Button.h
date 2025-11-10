@@ -32,7 +32,7 @@ struct ButtonSM {
     uint8_t clicks() const { return clicks_; }
 
     // The event that happened (reset on tick())
-    SUPP_INLINE ButtonEvent event() { return static_cast<ButtonEvent>(state_ & EventMask); }
+    SUPP_INLINE ButtonEvent event() const { return static_cast<ButtonEvent>(state_ & EventMask); }
 
     bool busy() const;
     bool pressing() const;
