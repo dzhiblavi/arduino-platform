@@ -9,7 +9,7 @@
 
 namespace platform {
 
-template <type::InterruptPin Pin, ButtonSettings S = {}>
+template <type::DigitalInputPin Pin, ButtonSettings S = {}>
 class GyverButton : public VirtButton, public Singleton<GyverButton<Pin, S>> {
  public:
     GyverButton() = default;
@@ -20,7 +20,10 @@ class GyverButton : public VirtButton, public Singleton<GyverButton<Pin, S>> {
         setHoldTimeout(S.hold_ms);
         setTimeout(S.timeout_ms);
         pin.init();
-        pin.interrupt().attach(GyverButton::buttonISR, interruptMode(S.level));
+
+        if constexpr (type::InterruptPin<Pin>) {
+            pin.interrupt().attach(GyverButton::buttonISR, interruptMode(S.level));
+        }
     }
 
     void tick() { VirtButton::tick(pin.read()); }
