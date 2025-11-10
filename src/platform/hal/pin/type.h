@@ -32,7 +32,7 @@ concept DigitalOutputPin = requires(T pin) {
 template <typename T>
 concept DigitalInputPin = requires(T pin) {
     requires DigitalPin<T>;
-    { pin.read() } -> std::same_as<int>;
+    { pin.read() } -> std::same_as<uint8_t>;
 };
 
 template <typename T>

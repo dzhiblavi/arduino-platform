@@ -3,11 +3,12 @@
 #include "platform/hal/int/mode.h"
 
 #include <concepts>
-#include <cstdint>
 
-namespace platform::type {
+namespace platform {
 
 using InterruptFunc = void (*)();
+
+namespace type {
 
 template <typename T>
 concept Interrupt = requires(T interrupt, InterruptFunc func, InterruptMode mode) {
@@ -15,4 +16,6 @@ concept Interrupt = requires(T interrupt, InterruptFunc func, InterruptMode mode
     { interrupt.detach() } -> std::same_as<void>;
 };
 
-}  // namespace platform::type
+}  // namespace type
+
+}  // namespace platform

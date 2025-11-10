@@ -12,6 +12,8 @@ class Singleton {
         self_ = static_cast<Self*>(this);
     }
 
+    ~Singleton() { self_ = nullptr; }
+
     static Self& instance() {
         DASSERT(self_ != nullptr);
         return *self_;

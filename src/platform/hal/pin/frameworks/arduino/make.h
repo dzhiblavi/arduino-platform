@@ -51,7 +51,7 @@ struct Pin {
     template <GPIOMode Mode>
     requires(C.dio && isDigitalInput(Mode))
     struct Input : DIOBase<Mode> {
-        int read() const { return gio::read(P); }
+        uint8_t read() const { return gio::read(P); }
     };
 
     template <IOCaps X = C>

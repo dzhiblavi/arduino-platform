@@ -2,23 +2,20 @@
 
 #include "platform/sys/config.h"  // IWYU pragma: keep
 
-#if defined(PLATFORM_ARDUINO)
+#if defined(PLATFORM_NATIVE)
 
-#include "platform/hal/int/frameworks/arduino/mode.h"
-
+#include "platform/hal/emulator/Emulator.h"
 #include "platform/hal/int/type.h"
-
-#include <Arduino.h>
 
 namespace platform {
 
 template <uint8_t IntNo>
 struct Interrupt {
     void attach(InterruptFunc func, InterruptMode mode) const {
-        ::attachInterrupt(IntNo, func, native(mode));
+        Emulator::instance().attachInterrupt(IntNo, func, mode);
     }
 
-    void detach() const { ::detachInterrupt(IntNo); }
+    void detach() const { Emulator::instance().detachInterrupt(IntNo); }
 };
 
 }  // namespace platform

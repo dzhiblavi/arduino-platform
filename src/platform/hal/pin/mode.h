@@ -48,4 +48,15 @@ constexpr bool isInput(GPIOMode mode) {
     }
 }
 
+constexpr const char* toString(GPIOMode mode) {
+    switch (mode) {
+        case GPIOMode::InputPullup:
+            return "InputPullup";
+        case GPIOMode::Input:
+            return "Input";
+        case GPIOMode::Output:
+            return "Output";
+    }
+}
+
 }  // namespace platform
