@@ -1,41 +1,33 @@
 #pragma once
 
-#include "platform/Callback.h"
 #include "platform/Singleton.h"
 #include "platform/hal/pin/type.h"
-#include "platform/io/button/ButtonLevel.h"
+#include "platform/io/button/ButtonSettings.h"
 
 // #define EB_NO_CALLBACK // THIS ENABLES BUGS IN THE LIBRARY
 #include <core/VirtButton.h>
 
 namespace platform {
 
-template <type::InterruptPin Pin, ButtonLevel Level = ButtonLevel::High>
-class GyverButton : public VirtButton, public Singleton<GyverButton<Pin, Level>> {
+template <type::InterruptPin Pin, ButtonSettings S = {}>
+class GyverButton : public VirtButton, public Singleton<GyverButton<Pin, S>> {
  public:
-    using CallbackArgType = GyverButton&;
-    using CallbackType = Callback<CallbackArgType>;
-
     GyverButton() = default;
 
     void init() {
-        setBtnLevel(Level == ButtonLevel::High);
+        setBtnLevel(S.level == ButtonLevel::High);
+        setDebTimeout(S.debounce_ms);
+        setHoldTimeout(S.hold_ms);
+        setTimeout(S.timeout_ms);
         pin.init();
-        pin.interrupt().attach(GyverButton::buttonISR, interruptMode(Level));
+        pin.interrupt().attach(GyverButton::buttonISR, interruptMode(S.level));
     }
 
-    void setCallback(CallbackType* callback) { callback_ = callback; }
-
-    void tick() {
-        if (VirtButton::tick(pin.read()) && callback_) {
-            callback_->run(*this);
-        }
-    }
+    void tick() { VirtButton::tick(pin.read()); }
 
  private:
     static void buttonISR() { GyverButton::instance().pressISR(); }
 
-    CallbackType* callback_ = nullptr;
     [[no_unique_address]] const Pin pin{};
 };
 

@@ -2,18 +2,11 @@
 
 #include "platform/Singleton.h"
 #include "platform/hal/pin/type.h"
-#include "platform/io/button/ButtonLevel.h"
+#include "platform/io/button/ButtonSettings.h"
 
 #include <supp/inline.h>
 
 namespace platform {
-
-struct ButtonSettings {
-    uint16_t hold_ms = 500;
-    uint16_t timeout_ms = 500;  // after the last release
-    uint8_t debounce_ms = 50;
-    ButtonLevel level = ButtonLevel::High;
-};
 
 // clang-format off
 enum class [[nodiscard]] ButtonEvent : uint8_t {  // 3 bits

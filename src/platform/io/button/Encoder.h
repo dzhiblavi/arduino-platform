@@ -2,21 +2,11 @@
 
 #include "platform/Singleton.h"
 #include "platform/hal/pin/type.h"
+#include "platform/io/button/EncoderSettings.h"
 
 #include <supp/inline.h>
 
 namespace platform {
-
-enum EncoderType : uint8_t {
-    Step4Low,
-    Step4High,
-    Step2,
-    Step1,
-};
-
-struct EncoderSettings {
-    EncoderType type = EncoderType::Step4Low;
-};
 
 namespace sm {
 
