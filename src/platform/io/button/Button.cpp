@@ -78,23 +78,28 @@ void ButtonSM::poll(bool engaged, const ButtonSettings& settings) {
     }
 }
 
-ButtonState ButtonSM::state() const {
-    switch (state_ & StateMask) {
-        case Idle:
-            return ButtonState::Idle;
-        case PressDebounce:
-            return ButtonState::Pressing;
-        case ReleaseDebounce:
-            return ButtonState::Waiting;
-        case Pressing:
-            return ButtonState::Pressing;
-        case Holding:
-            return ButtonState::Holding;
-        case Waiting:
-            return ButtonState::Waiting;
-    }
+bool ButtonSM::busy() const {
+    return (state_ & StateMask) != Idle;
+}
 
-    __builtin_unreachable();
+bool ButtonSM::holding() const {
+    return (state_ & StateMask) == Holding;
+}
+
+bool ButtonSM::waiting() const {
+    return (state_ & StateMask) == Waiting;
+}
+
+bool ButtonSM::pressing() const {
+    switch (state_ & StateMask) {
+        case Pressing:
+        case PressDebounce:
+        case Holding:
+            return true;
+
+        default:
+            return false;
+    }
 }
 
 SUPP_INLINE void ButtonSM::clearEvent() {

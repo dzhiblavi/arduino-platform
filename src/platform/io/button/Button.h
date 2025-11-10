@@ -20,47 +20,7 @@ enum class [[nodiscard]] ButtonEvent : uint8_t {  // 3 bits
 };
 // clang-format on
 
-enum class [[nodiscard]] ButtonState : uint8_t {
-    Idle = 1 << 0,
-    Waiting = 1 << 1,
-    Pressing = 1 << 2,
-    Holding = Pressing | 1 << 3,
-};
-
-constexpr const char* toString(ButtonEvent event) {
-    switch (event) {
-        case ButtonEvent::None:
-            return "None";
-        case ButtonEvent::Pressed:
-            return "Pressed";
-        case ButtonEvent::Clicked:
-            return "Clicked";
-        case ButtonEvent::HoldStarted:
-            return "HoldStarted";
-        case ButtonEvent::HoldReleased:
-            return "HoldReleased";
-        case ButtonEvent::Timeout:
-            return "Timeout";
-    }
-
-    __builtin_unreachable();
-}
-
-constexpr const char* toString(ButtonState state) {
-    switch (state) {
-        case ButtonState::Idle:
-            return "Idle";
-        case ButtonState::Waiting:
-            return "Waiting";
-        case ButtonState::Pressing:
-            return "Pressing";
-        case ButtonState::Holding:
-            return "Holding";
-            break;
-    }
-
-    __builtin_unreachable();
-}
+constexpr const char* toString(ButtonEvent event);
 
 namespace sm {
 
@@ -74,8 +34,10 @@ struct ButtonSM {
     // The event that happened (reset on tick())
     SUPP_INLINE ButtonEvent event() { return static_cast<ButtonEvent>(state_ & EventMask); }
 
-    // Current button state mask
-    ButtonState state() const;
+    bool busy() const;
+    bool pressing() const;
+    bool holding() const;
+    bool waiting() const;
 
  protected:
     SUPP_INLINE void isr() { state_ = State(state_ | ISRMask); }
@@ -110,7 +72,7 @@ struct ButtonSM {
 }  // namespace sm
 
 template <type::DigitalInputPin Pin, ButtonSettings S = {}>
-class Button : sm::ButtonSM, public Singleton<Button<Pin, S>> {
+class Button : public sm::ButtonSM, public Singleton<Button<Pin, S>> {
  public:
     Button() = default;
 
@@ -130,15 +92,30 @@ class Button : sm::ButtonSM, public Singleton<Button<Pin, S>> {
         }
     }
 
-    using sm::ButtonSM::clicks;
-    using sm::ButtonSM::event;
-    using sm::ButtonSM::state;
-
  private:
     static void buttonISR() { Button::instance().isr(); }
 
     [[no_unique_address]] const Pin pin{};
 };
+
+constexpr const char* toString(ButtonEvent event) {
+    switch (event) {
+        case ButtonEvent::None:
+            return "None";
+        case ButtonEvent::Pressed:
+            return "Pressed";
+        case ButtonEvent::Clicked:
+            return "Clicked";
+        case ButtonEvent::HoldStarted:
+            return "HoldStarted";
+        case ButtonEvent::HoldReleased:
+            return "HoldReleased";
+        case ButtonEvent::Timeout:
+            return "Timeout";
+    }
+
+    __builtin_unreachable();
+}
 
 }  // namespace platform
 
