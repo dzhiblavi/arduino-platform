@@ -7,27 +7,89 @@
 
 namespace platform {
 
+enum class [[nodiscard]] EncButtonEvent : uint8_t {
+    None,
+    Pressed,
+    Clicked,
+    HoldStarted,
+    HoldReleased,
+    Timeout,
+    TurnRight,
+    TurnLeft,
+    TurnRightHold,
+    TurnLeftHold,
+};
+
 template <
     type::InterruptPin S1,
     type::InterruptPin S2,
     type::DigitalInputPin Btn,
     EncButtonSettings S = {}>
-class EncButton : public Encoder<S1, S2, S.encoder>, public Button<Btn, S.button> {
+class EncButton : Encoder<S1, S2, S.encoder>, Button<Btn, S.button> {
+    using E = Encoder<S1, S2, S.encoder>;
+    using B = Button<Btn, S.button>;
+
  public:
     EncButton() = default;
 
     void init() {
-        Encoder<S1, S2, S.encoder>::init();
-        Button<Btn, S.button>::init();
+        E::init();
+        B::init();
     }
 
     void tick() {
-        Button<Btn, S.button>::tick();
-        Encoder<S1, S2, S.encoder>::tick();
+        B::tick();
+        E::tick();
+
+        if (E::turning()) {
+            suspend_btn_ = B::pressing();
+        }
     }
 
-    SUPP_INLINE EncoderEvent encEvent() const { return Encoder<S1, S2, S.encoder>::event(); }
-    SUPP_INLINE EncoderEvent buttonEvent() const { return Button<Btn, S.button>::event(); }
+    EncButtonEvent event() const {
+        if (suspend_btn_) {
+            switch (E::event()) {
+                case EncoderEvent::TurnLeft:
+                    return B::pressing() ? EncButtonEvent::TurnLeftHold  //
+                                         : EncButtonEvent::TurnLeft;
+                case EncoderEvent::TurnRight:
+                    return B::pressing() ? EncButtonEvent::TurnRightHold
+                                         : EncButtonEvent::TurnRight;
+                default:
+                    break;
+            }
+        } else {
+            switch (B::event()) {
+                case ButtonEvent::Pressed:
+                    return EncButtonEvent::Pressed;
+                case ButtonEvent::Clicked:
+                    return EncButtonEvent::Clicked;
+                case ButtonEvent::HoldStarted:
+                    return EncButtonEvent::HoldStarted;
+                case ButtonEvent::HoldReleased:
+                    return EncButtonEvent::HoldReleased;
+                case ButtonEvent::Timeout:
+                    return EncButtonEvent::Timeout;
+                default:
+                    break;
+            }
+            switch (E::event()) {
+                case EncoderEvent::TurnLeft:
+                    return EncButtonEvent::TurnLeft;
+                case EncoderEvent::TurnRight:
+                    return EncButtonEvent::TurnRight;
+                default:
+                    break;
+            }
+        }
+
+        return EncButtonEvent::None;
+    }
+
+    using B::clicks;
+
+ private:
+    bool suspend_btn_ = false;
 };
 
 }  // namespace platform
