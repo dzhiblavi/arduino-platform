@@ -13,7 +13,6 @@ namespace sm {
 struct EncoderSM {
  public:
     int8_t tick();
-
     SUPP_INLINE bool turning() { return s & Turn; }
     SUPP_INLINE bool direction() { return s & Dir; }
     SUPP_INLINE int8_t counter() { return counter_; }
@@ -40,7 +39,7 @@ struct EncoderSM {
 }  // namespace sm
 
 template <type::InterruptPin S1, type::InterruptPin S2, EncoderSettings S = {}>
-class Encoder : sm::EncoderSM, public Singleton<Encoder<S1, S2, S>> {
+class Encoder : public sm::EncoderSM, public Singleton<Encoder<S1, S2, S>> {
  public:
     Encoder() = default;
 
@@ -50,12 +49,6 @@ class Encoder : sm::EncoderSM, public Singleton<Encoder<S1, S2, S>> {
         s1.interrupt().attach(Encoder::encoderISR, InterruptMode::Change);
         s2.interrupt().attach(Encoder::encoderISR, InterruptMode::Change);
     }
-
-    using sm::EncoderSM::counter;
-    using sm::EncoderSM::direction;
-    using sm::EncoderSM::turning;
-
-    using sm::EncoderSM::tick;
 
  private:
     static void encoderISR() { Encoder::instance().tickISR(S1().read(), S2().read(), S); }
