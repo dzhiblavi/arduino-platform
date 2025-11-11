@@ -52,22 +52,21 @@ class EncButton : Encoder<S1, S2, S.encoder>, Button<Btn, S.button> {
                 return B::pressing() ? EncButtonEvent::TurnLeftHold : EncButtonEvent::TurnLeft;
             case EncoderEvent::TurnRight:
                 return B::pressing() ? EncButtonEvent::TurnRightHold : EncButtonEvent::TurnRight;
-            default:
-                break;
-        }
-        switch (B::event()) {
-            case ButtonEvent::Pressed:
-                return EncButtonEvent::Pressed;
-            case ButtonEvent::Released:
-                return EncButtonEvent::Released;
-            case ButtonEvent::Clicked:
-                return EncButtonEvent::Clicked;
-            case ButtonEvent::HoldStarted:
-                return EncButtonEvent::HoldStarted;
-            case ButtonEvent::Timeout:
-                return EncButtonEvent::Timeout;
-            default:
-                break;
+            case EncoderEvent::None:
+                switch (B::event()) {
+                    case ButtonEvent::Pressed:
+                        return EncButtonEvent::Pressed;
+                    case ButtonEvent::Released:
+                        return EncButtonEvent::Released;
+                    case ButtonEvent::Clicked:
+                        return EncButtonEvent::Clicked;
+                    case ButtonEvent::HoldStarted:
+                        return EncButtonEvent::HoldStarted;
+                    case ButtonEvent::Timeout:
+                        return EncButtonEvent::Timeout;
+                    case ButtonEvent::None:
+                        return EncButtonEvent::None;
+                }
         }
 
         return EncButtonEvent::None;
