@@ -16,8 +16,7 @@ enum class [[nodiscard]] ButtonEvent : uint8_t {  // 3 bits
     Released     = 0b00100000,
     Clicked      = 0b00110000,
     HoldStarted  = 0b01000000,
-    HoldReleased = 0b01010000,
-    Timeout      = 0b01100000,
+    Timeout      = 0b01010000,
 };
 // clang-format on
 
@@ -109,8 +108,6 @@ constexpr const char* toString(ButtonEvent event) {
             return "Clicked";
         case ButtonEvent::HoldStarted:
             return "HoldStarted";
-        case ButtonEvent::HoldReleased:
-            return "HoldReleased";
         case ButtonEvent::Timeout:
             return "Timeout";
     }

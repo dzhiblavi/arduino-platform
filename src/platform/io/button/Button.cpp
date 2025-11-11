@@ -41,7 +41,7 @@ void ButtonSM::poll(bool engaged, const ButtonSettings& settings) {
         case Holding | 0b0:
             clicks_ = 0;
             timer_ = now;
-            set(ReleaseDebounce, ButtonEvent::HoldReleased);
+            set(ReleaseDebounce, ButtonEvent::Released);
             break;
 
         case Holding | 0b1:

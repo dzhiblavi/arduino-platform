@@ -13,7 +13,6 @@ enum class [[nodiscard]] EncButtonEvent : uint8_t {
     Released,
     Clicked,
     HoldStarted,
-    HoldReleased,
     Timeout,
     TurnRight,
     TurnLeft,
@@ -65,8 +64,6 @@ class EncButton : Encoder<S1, S2, S.encoder>, Button<Btn, S.button> {
                 return EncButtonEvent::Clicked;
             case ButtonEvent::HoldStarted:
                 return EncButtonEvent::HoldStarted;
-            case ButtonEvent::HoldReleased:
-                return EncButtonEvent::HoldReleased;
             case ButtonEvent::Timeout:
                 return EncButtonEvent::Timeout;
             default:
