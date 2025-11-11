@@ -25,7 +25,7 @@ template <
     type::InterruptPin S2,
     type::DigitalInputPin Btn,
     EncButtonSettings S = {}>
-class EncButton : Encoder<S1, S2, S.encoder>, Button<Btn, S.button> {
+class EncButton : public Encoder<S1, S2, S.encoder>, public Button<Btn, S.button> {
     using E = Encoder<S1, S2, S.encoder>;
     using B = Button<Btn, S.button>;
 
@@ -71,8 +71,6 @@ class EncButton : Encoder<S1, S2, S.encoder>, Button<Btn, S.button> {
 
         return EncButtonEvent::None;
     }
-
-    using B::clicks;
 };
 
 }  // namespace platform
