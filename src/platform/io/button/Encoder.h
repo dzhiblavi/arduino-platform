@@ -19,7 +19,6 @@ namespace sm {
 struct EncoderSM {
  public:
     void tick();
-
     EncoderEvent event() const;
     bool turning() const { return s & Turn; }
     bool direction() const { return s & Dir; }
@@ -35,13 +34,13 @@ struct EncoderSM {
         P0 = 1 << 0,
         P1 = 1 << 1,
         Turn = 1 << 2,
-        Dir = 1 << 3,
-        Isr = 1 << 4,
+        Isr = 1 << 3,
+        Dir = 1 << 4,
     };
 
-    volatile uint8_t s = 0;
+    uint8_t s = 0;
     volatile int8_t counter_ = 0;
-    int8_t pos = 0;
+    int8_t pos = 0;  // used in ISR only
 };
 
 }  // namespace sm

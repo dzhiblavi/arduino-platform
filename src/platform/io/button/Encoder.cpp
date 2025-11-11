@@ -5,16 +5,11 @@ namespace platform {
 namespace sm {
 
 void EncoderSM::tick() {
-    switch (s & Isr) {
-        case 0b0:
-            if (s & Turn) {
-                s &= ~Turn;
-            }
-            break;
-        case Isr:
-            s &= ~Isr;
-            s |= Turn;
-            break;
+    if (s & Isr) {
+        s &= ~Isr;
+        s |= Turn;
+    } else if (s & Turn) {
+        s &= ~Turn;
     }
 }
 
