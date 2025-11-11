@@ -10,6 +10,7 @@ namespace platform {
 enum class [[nodiscard]] EncButtonEvent : uint8_t {
     None,
     Pressed,
+    Released,
     Clicked,
     HoldStarted,
     HoldReleased,
@@ -42,54 +43,40 @@ class EncButton : Encoder<S1, S2, S.encoder>, Button<Btn, S.button> {
         E::tick();
 
         if (E::turning()) {
-            suspend_btn_ = B::pressing();
+            B::suspendIfPressing();
         }
     }
 
     EncButtonEvent event() const {
-        if (suspend_btn_) {
-            switch (E::event()) {
-                case EncoderEvent::TurnLeft:
-                    return B::pressing() ? EncButtonEvent::TurnLeftHold  //
-                                         : EncButtonEvent::TurnLeft;
-                case EncoderEvent::TurnRight:
-                    return B::pressing() ? EncButtonEvent::TurnRightHold
-                                         : EncButtonEvent::TurnRight;
-                default:
-                    break;
-            }
-        } else {
-            switch (B::event()) {
-                case ButtonEvent::Pressed:
-                    return EncButtonEvent::Pressed;
-                case ButtonEvent::Clicked:
-                    return EncButtonEvent::Clicked;
-                case ButtonEvent::HoldStarted:
-                    return EncButtonEvent::HoldStarted;
-                case ButtonEvent::HoldReleased:
-                    return EncButtonEvent::HoldReleased;
-                case ButtonEvent::Timeout:
-                    return EncButtonEvent::Timeout;
-                default:
-                    break;
-            }
-            switch (E::event()) {
-                case EncoderEvent::TurnLeft:
-                    return EncButtonEvent::TurnLeft;
-                case EncoderEvent::TurnRight:
-                    return EncButtonEvent::TurnRight;
-                default:
-                    break;
-            }
+        switch (E::event()) {
+            case EncoderEvent::TurnLeft:
+                return B::pressing() ? EncButtonEvent::TurnLeftHold : EncButtonEvent::TurnLeft;
+            case EncoderEvent::TurnRight:
+                return B::pressing() ? EncButtonEvent::TurnRightHold : EncButtonEvent::TurnRight;
+            default:
+                break;
+        }
+        switch (B::event()) {
+            case ButtonEvent::Pressed:
+                return EncButtonEvent::Pressed;
+            case ButtonEvent::Released:
+                return EncButtonEvent::Released;
+            case ButtonEvent::Clicked:
+                return EncButtonEvent::Clicked;
+            case ButtonEvent::HoldStarted:
+                return EncButtonEvent::HoldStarted;
+            case ButtonEvent::HoldReleased:
+                return EncButtonEvent::HoldReleased;
+            case ButtonEvent::Timeout:
+                return EncButtonEvent::Timeout;
+            default:
+                break;
         }
 
         return EncButtonEvent::None;
     }
 
     using B::clicks;
-
- private:
-    bool suspend_btn_ = false;
 };
 
 }  // namespace platform

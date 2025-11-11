@@ -73,6 +73,14 @@ void ButtonSM::poll(bool engaged, const ButtonSettings& settings) {
             set(PressDebounce, ButtonEvent::Pressed);
             break;
 
+        case PressSuspended | 0b0:
+            timer_ = now;
+            set(ReleaseDebounce, ButtonEvent::Released);
+            break;
+
+        case PressSuspended | 0b1:
+            break;
+
         default:
             break;
     }
@@ -94,6 +102,7 @@ bool ButtonSM::pressing() const {
     switch (state_ & StateMask) {
         case Pressing:
         case PressDebounce:
+        case PressSuspended:
         case Holding:
             return true;
 
@@ -102,17 +111,23 @@ bool ButtonSM::pressing() const {
     }
 }
 
-SUPP_INLINE void ButtonSM::clearEvent() {
+void ButtonSM::clearEvent() {
     state_ = State(state_ & ~EventMask);
 }
 
-SUPP_INLINE void ButtonSM::set(State state, ButtonEvent event) {
+void ButtonSM::set(State state, ButtonEvent event) {
     state_ = State(static_cast<uint8_t>(event) | state);
 }
 
-SUPP_INLINE uint8_t ButtonSM::updateStateClearEvent(bool engaged) {
+uint8_t ButtonSM::updateStateClearEvent(bool engaged) {
     state_ = State((state_ & StateMask) | engaged | ((state_ & ISRMask) == ISRMask));
     return state_;
+}
+
+void ButtonSM::suspendIfPressing() {
+    if (pressing()) {
+        state_ = PressSuspended;
+    }
 }
 
 }  // namespace sm

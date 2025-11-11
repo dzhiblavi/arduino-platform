@@ -13,10 +13,11 @@ enum class [[nodiscard]] ButtonEvent : uint8_t {  // 3 bits
     //             0b.XXX....
     None         = 0b00000000,
     Pressed      = 0b00010000,
-    Clicked      = 0b00100000,
-    HoldStarted  = 0b00110000,
-    HoldReleased = 0b01000000,
-    Timeout      = 0b01010000,
+    Released     = 0b00100000,
+    Clicked      = 0b00110000,
+    HoldStarted  = 0b01000000,
+    HoldReleased = 0b01010000,
+    Timeout      = 0b01100000,
 };
 // clang-format on
 
@@ -37,6 +38,7 @@ struct ButtonSM {
 
  protected:
     SUPP_INLINE void isr() { state_ = State(state_ | ISRMask); }
+    void suspendIfPressing();
 
  private:
     // clang-format off
@@ -53,12 +55,13 @@ struct ButtonSM {
         Pressing        = 0b00001000,
         Holding         = 0b00001010,
         Waiting         = 0b00001100,
+        PressSuspended  = 0b00001110,
     };
     // clang-format on
 
-    SUPP_INLINE void clearEvent();
-    SUPP_INLINE void set(State state, ButtonEvent event);
-    SUPP_INLINE uint8_t updateStateClearEvent(bool engaged);
+    void clearEvent();
+    void set(State state, ButtonEvent event);
+    uint8_t updateStateClearEvent(bool engaged);
 
     uint16_t timer_ = 0;
     uint8_t clicks_ = 0;
@@ -100,6 +103,8 @@ constexpr const char* toString(ButtonEvent event) {
             return "None";
         case ButtonEvent::Pressed:
             return "Pressed";
+        case ButtonEvent::Released:
+            return "Released";
         case ButtonEvent::Clicked:
             return "Clicked";
         case ButtonEvent::HoldStarted:
