@@ -47,7 +47,7 @@ struct t_button {
         e.writePin(pin, value);  // engage button
         tick();
 
-        for (int i = 0; i < 3; ++i) {  // 40ms bounce
+        for (int i = 0; i < 3; ++i) {  // 30ms bounce
             skipMillis(10);
             e.writePin(pin, i & 0b1);
             tick();
@@ -119,7 +119,7 @@ TEST_F(t_button, hold) {
     expect(0, ButtonEvent::HoldStarted);
     tickAfter(2000);
 
-    expect(0, ButtonEvent::HoldReleased);
+    expect(0, ButtonEvent::Released);
     skipMillis(1000);
     releaseBounce();
 
@@ -150,7 +150,7 @@ TEST_F(t_button, clicks_then_hold) {
     expect(2, ButtonEvent::HoldStarted);
     tickAfter(1000);
 
-    expect(0, ButtonEvent::HoldReleased);
+    expect(0, ButtonEvent::Released);
     skipMillis(100);
     releaseBounce();
 
@@ -165,7 +165,7 @@ TEST_F(t_button, hold_then_clicks) {
     expect(0, ButtonEvent::HoldStarted);
     tickAfter(2000);
 
-    expect(0, ButtonEvent::HoldReleased);
+    expect(0, ButtonEvent::Released);
     skipMillis(1000);
     releaseBounce();
 

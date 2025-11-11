@@ -147,7 +147,7 @@ TEST_F(t_write, test_with_timeout_expired) {
     fill(8);
     coro.start();
     TEST_ASSERT_EQUAL(1, executor.queued.size());
-    TEST_ASSERT_EQUAL(10, timerservice.wakeAt().micros());
+    TEST_ASSERT_EQUAL(10, timerservice.wakeAt().millis());
 
     drain(1);
     executor.queued.popFront()->run();
@@ -174,12 +174,12 @@ TEST_F(t_write, test_with_timeout_succeeded) {
     fill(8);
     coro.start();
     TEST_ASSERT_EQUAL(1, executor.queued.size());
-    TEST_ASSERT_EQUAL(10, timerservice.wakeAt().micros());
+    TEST_ASSERT_EQUAL(10, timerservice.wakeAt().millis());
 
     drain(2);
     executor.queued.popFront()->run();  // should cancel timer
     TEST_ASSERT_TRUE(executor.queued.empty());
-    TEST_ASSERT_EQUAL(ttime::Time::max().micros(), timerservice.wakeAt().micros());
+    TEST_ASSERT_EQUAL(ttime::Time::max().millis(), timerservice.wakeAt().millis());
     TEST_ASSERT_TRUE(coro.done());
 
     check("xxxxxxabcd");

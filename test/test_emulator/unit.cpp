@@ -17,7 +17,7 @@ struct t_emulator {
 };
 
 TEST_F(t_emulator, example) {
-    Button<Pin<1, GPIOMode::InputPullup>, ButtonLevel::High> button;
+    Button<Pin<1, GPIOMode::InputPullup>> button;
 
     button.init();
     button.tick();
