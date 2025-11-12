@@ -8,7 +8,8 @@
 
 #endif
 
-#include "platform/hal/int/type.h"
+#include "platform/hal/int/mode.h"
+#include "platform/hal/int/vector.h"
 #include "platform/hal/pin/mode.h"
 
 #include <supp/verify.h>
@@ -62,9 +63,9 @@ class Emulator {
     }
 
     // Interrupts
-    void attachInterrupt(Pin pin, InterruptFunc func, InterruptMode mode) {
+    void attachInterrupt(Pin pin, InterruptMode mode) {
         LTRACE("[emulator] attach pin=", pin, ", mode=", toString(mode));
-        interrupts_[pin] = {mode, func};
+        interrupts_[pin] = mode;
     }
 
     void detachInterrupt(Pin pin) {
@@ -87,14 +88,27 @@ class Emulator {
             return;
         }
 
-        auto&& [intmode, func] = it->second;
+        auto&& intmode = it->second;
         if (intmode != mode) {
             LTRACE("[emulator] raise (nomode) pin=", pin, ", mode=", toString(mode));
             return;
         }
 
         LTRACE("[emulator] raise (call) pin=", pin, ", mode=", toString(mode));
-        func();
+        switch (pin) {
+            case 0:
+                ::platform::detail::_vector<0>();
+                break;
+            case 1:
+                ::platform::detail::_vector<0>();
+                break;
+            case 2:
+                ::platform::detail::_vector<0>();
+                break;
+            default:
+                DASSERT(false, "emulator supports 0,1,2 interrupts only");
+                break;
+        }
     }
 
     static Emulator& instance() {
@@ -105,18 +119,13 @@ class Emulator {
  private:
     Emulator() = default;
 
-    struct Interrupt {
-        InterruptMode mode;
-        InterruptFunc func;
-    };
-
     struct PinState {
         std::optional<GPIOMode> mode = std::nullopt;  // None for ADC
         int value = 0;                                // ADC or digital
         bool pwm = false;
     };
 
-    std::unordered_map<Pin, Interrupt> interrupts_;
+    std::unordered_map<Pin, InterruptMode> interrupts_;
     std::unordered_map<Pin, PinState> pins_;
 };
 

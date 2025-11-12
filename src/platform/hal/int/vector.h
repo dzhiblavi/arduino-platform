@@ -9,7 +9,7 @@ namespace platform::detail {
 
 template <size_t IntNo>
 void _vector() {
-    abort();
+    // does nothing by default
 }
 
 }  // namespace platform::detail

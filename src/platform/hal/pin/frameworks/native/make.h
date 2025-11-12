@@ -6,6 +6,7 @@
 
 #include "platform/hal/emulator/Emulator.h"
 #include "platform/hal/int/frameworks/native/make.h"
+#include "platform/hal/int/type.h"
 #include "platform/hal/pin/capability.h"
 
 namespace platform {

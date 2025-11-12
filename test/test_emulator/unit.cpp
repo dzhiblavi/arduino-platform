@@ -21,6 +21,8 @@ TEST_F(t_emulator, example) {
 
     button.init();
     button.tick();
+
+    e.raiseInterrupt(1, InterruptMode::Rising);
 }
 
 }  // namespace platform
