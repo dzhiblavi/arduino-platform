@@ -75,9 +75,16 @@ struct t_button {
     ButtonEvent event = ButtonEvent::None;
 };
 
+PLATFORM_BUTTON_ISR(t_button::Pin);
+
 TEST_F(t_button, press_bounce) {
     expect(0, ButtonEvent::Pressed);
     pressBounce();
+}
+
+TEST_F(t_button, press_from_isr) {
+    expect(0, ButtonEvent::Pressed);
+    e.raiseInterrupt<Pin().interrupt().number()>(InterruptMode::Rising);
 }
 
 TEST_F(t_button, single_click) {
