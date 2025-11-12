@@ -37,7 +37,7 @@ struct ButtonSM {
 
  protected:
     void poll(bool engaged, const ButtonSettings& settings);
-    SUPP_INLINE void isr() { state_ = State(state_ | ISRMask); }
+    SUPP_INLINE PLATFORM_RAM void isr() { state_ = State(state_ | ISRMask); }
     void suspendIfPressing();
 
  private:

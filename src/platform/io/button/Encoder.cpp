@@ -28,7 +28,7 @@ EncoderEvent EncoderSM::event() const {
     return EncoderEvent::None;
 }
 
-void EncoderSM::tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e) {
+PLATFORM_RAM void EncoderSM::tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e) {
     const int8_t res = poll(e0, e1, e);
     if (res == 0) {
         return;
@@ -38,7 +38,7 @@ void EncoderSM::tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e) {
     (res > 0) ? s |= Dir : s &= ~Dir;
 }
 
-int8_t EncoderSM::poll(uint8_t e0, uint8_t e1, const EncoderSettings& S) {
+PLATFORM_RAM int8_t EncoderSM::poll(uint8_t e0, uint8_t e1, const EncoderSettings& S) {
     const uint8_t p0 = s & P0;
     const uint8_t p1 = (s & P1) >> 1;
 

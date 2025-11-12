@@ -8,9 +8,7 @@
 namespace platform::detail {
 
 template <size_t IntNo>
-void _vector() {
-    // does nothing by default
-}
+void _vector();
 
 }  // namespace platform::detail
 

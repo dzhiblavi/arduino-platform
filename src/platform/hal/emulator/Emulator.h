@@ -81,34 +81,22 @@ class Emulator {
         p.value = value;
     }
 
-    void raiseInterrupt(Pin pin, InterruptMode mode) {
-        auto it = interrupts_.find(pin);
+    template <size_t Pin>
+    void raiseInterrupt(InterruptMode mode) {
+        auto it = interrupts_.find(Pin);
         if (it == interrupts_.end()) {
-            LTRACE("[emulator] raise (noint) pin=", pin, ", mode=", toString(mode));
+            LTRACE("[emulator] raise (noint) pin=", Pin, ", mode=", toString(mode));
             return;
         }
 
         auto&& intmode = it->second;
         if (intmode != mode) {
-            LTRACE("[emulator] raise (nomode) pin=", pin, ", mode=", toString(mode));
+            LTRACE("[emulator] raise (nomode) pin=", Pin, ", mode=", toString(mode));
             return;
         }
 
-        LTRACE("[emulator] raise (call) pin=", pin, ", mode=", toString(mode));
-        switch (pin) {
-            case 0:
-                ::platform::detail::_vector<0>();
-                break;
-            case 1:
-                ::platform::detail::_vector<0>();
-                break;
-            case 2:
-                ::platform::detail::_vector<0>();
-                break;
-            default:
-                DASSERT(false, "emulator supports 0,1,2 interrupts only");
-                break;
-        }
+        LTRACE("[emulator] raise (call) pin=", Pin, ", mode=", toString(mode));
+        ::platform::detail::_vector<Pin>();
     }
 
     static Emulator& instance() {
@@ -128,5 +116,14 @@ class Emulator {
     std::unordered_map<Pin, InterruptMode> interrupts_;
     std::unordered_map<Pin, PinState> pins_;
 };
+
+namespace detail {
+
+template <size_t I>
+void _vector() {
+    DASSERT(false, "interrupt handler not found: ", I);
+}
+
+}  // namespace detail
 
 }  // namespace platform

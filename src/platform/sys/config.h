@@ -10,6 +10,8 @@
 
 #elif defined(ARDUINO_ARCH_ESP8266)
 
+#include <c_types.h>  // IRAM_ATTR
+
 #define PLATFORM_ARDUINO
 #define PLATFORM_ARDUINO_ESP8266
 

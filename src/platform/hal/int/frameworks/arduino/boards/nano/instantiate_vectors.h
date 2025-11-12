@@ -4,6 +4,16 @@
 
 #include <Arduino.h>
 
+namespace platform::detail {
+
+template <size_t>
+void _vector() {
+    // undefined pin
+    abort();
+}
+
+}  // namespace platform::detail
+
 ISR(INT0_vect) {
     ::platform::detail::_vector<0>();
 }

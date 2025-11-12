@@ -12,6 +12,15 @@
 
 namespace platform {
 
+namespace detail {
+
+template <>
+void _vector<1>() {
+    LINFO("interrupt handler called");
+}
+
+}  // namespace detail
+
 struct t_emulator {
     Emulator& e = Emulator::instance();
 };
@@ -22,7 +31,7 @@ TEST_F(t_emulator, example) {
     button.init();
     button.tick();
 
-    e.raiseInterrupt(1, InterruptMode::Rising);
+    e.raiseInterrupt<1>(InterruptMode::Rising);
 }
 
 }  // namespace platform
