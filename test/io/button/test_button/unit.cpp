@@ -90,13 +90,25 @@ TEST_F(t_button, press_from_isr) {
 TEST_F(t_button, single_click) {
     expect(0, ButtonEvent::Pressed);
     pressBounce();
+    TEST_ASSERT_TRUE(b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(!b.waiting());
 
     expect(1, ButtonEvent::Clicked);
     skipMillis(100);
     releaseBounce();
+    TEST_ASSERT_TRUE(!b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(b.waiting());
 
     expect(0, ButtonEvent::Timeout);
     skipToTimeout();
+    TEST_ASSERT_TRUE(!b.pressing());
+    TEST_ASSERT_TRUE(!b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(!b.waiting());
 }
 
 TEST_F(t_button, multi_click) {
@@ -122,13 +134,25 @@ TEST_F(t_button, multi_click) {
 TEST_F(t_button, hold) {
     expect(0, ButtonEvent::Pressed);
     pressBounce();
+    TEST_ASSERT_TRUE(b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(!b.waiting());
 
     expect(0, ButtonEvent::HoldStarted);
     tickAfter(2000);
+    TEST_ASSERT_TRUE(b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(b.holding());
+    TEST_ASSERT_TRUE(!b.waiting());
 
     expect(0, ButtonEvent::Released);
     skipMillis(1000);
     releaseBounce();
+    TEST_ASSERT_TRUE(!b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(b.waiting());
 
     expect(0, ButtonEvent::Timeout);
     skipToTimeout();
@@ -194,6 +218,33 @@ TEST_F(t_button, hold_then_clicks) {
 
     expect(0, ButtonEvent::Timeout);
     skipToTimeout();
+}
+
+TEST_F(t_button, suspend_pressing) {
+    expect(0, ButtonEvent::Pressed);
+    pressBounce();
+    TEST_ASSERT_TRUE(b.pressing());
+
+    b.suspendIfPressing();
+    TEST_ASSERT_TRUE(b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(!b.waiting());
+
+    expect(0, ButtonEvent::None);
+    tickAfter(2000);
+    TEST_ASSERT_TRUE(b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(!b.waiting());
+
+    expect(0, ButtonEvent::Released);
+    skipMillis(1000);
+    releaseBounce();
+    TEST_ASSERT_TRUE(!b.pressing());
+    TEST_ASSERT_TRUE(b.busy());
+    TEST_ASSERT_TRUE(!b.holding());
+    TEST_ASSERT_TRUE(b.waiting());
 }
 
 }  // namespace platform
