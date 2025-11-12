@@ -81,6 +81,19 @@ void ButtonSM::poll(bool engaged, const ButtonSettings& settings) {
         case PressSuspended | 0b1:
             break;
 
+        case PressDebounceSuspended | 0b0:
+            if (elapsed >= settings.debounce_ms) {
+                timer_ = now;
+                set(ReleaseDebounce, ButtonEvent::Released);
+            }
+            break;
+
+        case PressDebounceSuspended | 0b1:
+            if (elapsed >= settings.debounce_ms) {
+                set(PressSuspended, ButtonEvent::None);
+            }
+            break;
+
         default:
             break;
     }
@@ -125,8 +138,18 @@ uint8_t ButtonSM::updateStateClearEvent(bool engaged) {
 }
 
 void ButtonSM::suspendIfPressing() {
-    if (pressing()) {
-        state_ = PressSuspended;
+    switch (state_ & StateMask) {
+        case Pressing:
+        case Holding:
+            state_ = PressSuspended;
+            break;
+
+        case PressDebounce:
+            state_ = PressDebounceSuspended;
+            break;
+
+        default:
+            break;
     }
 }
 

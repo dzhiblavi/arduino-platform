@@ -34,11 +34,11 @@ struct ButtonSM {
     bool holding() const;
     bool waiting() const;
     bool pressing() const;
+    void suspendIfPressing();
 
  protected:
     void poll(bool engaged, const ButtonSettings& settings);
     SUPP_INLINE PLATFORM_RAM void isr() { state_ = State(state_ | ISRMask); }
-    void suspendIfPressing();
 
  private:
     // clang-format off
@@ -49,13 +49,14 @@ struct ButtonSM {
 
     enum State : uint8_t {
         //                0b....XXX.
-        Idle            = 0b00000010,
-        PressDebounce   = 0b00000100,
-        ReleaseDebounce = 0b00000110,
-        Pressing        = 0b00001000,
-        Holding         = 0b00001010,
-        Waiting         = 0b00001100,
-        PressSuspended  = 0b00001110,
+        Idle                   = 0b00000000,
+        PressDebounce          = 0b00000010,
+        ReleaseDebounce        = 0b00000100,
+        Pressing               = 0b00000110,
+        Holding                = 0b00001000,
+        Waiting                = 0b00001010,
+        PressSuspended         = 0b00001100,
+        PressDebounceSuspended = 0b00001110,
     };
     // clang-format on
 

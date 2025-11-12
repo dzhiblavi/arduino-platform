@@ -41,6 +41,7 @@ struct Pin {
     struct Output : DIOBase<Mode> {
         void set() const { gio::high(P); }
         void clear() const { gio::low(P); }
+        void toggle() const { gio::toggle(P); }
 
         template <IOCaps X = C>
         requires(X.pwm)
