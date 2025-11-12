@@ -1,8 +1,10 @@
 #pragma once
 
 #include "platform/Singleton.h"
+#include "platform/hal/int/vector.h"  // IWYU pragma: keep
 #include "platform/hal/pin/type.h"
 #include "platform/io/button/ButtonSettings.h"
+#include "platform/util/isr_template.h"
 
 #include <supp/inline.h>
 
@@ -26,8 +28,6 @@ namespace sm {
 
 struct ButtonSM {
  public:
-    void poll(bool engaged, const ButtonSettings& settings);
-
     ButtonEvent event() const { return static_cast<ButtonEvent>(state_ & EventMask); }
     uint8_t clicks() const { return clicks_; }
     bool busy() const;
@@ -36,6 +36,7 @@ struct ButtonSM {
     bool pressing() const;
 
  protected:
+    void poll(bool engaged, const ButtonSettings& settings);
     SUPP_INLINE void isr() { state_ = State(state_ | ISRMask); }
     void suspendIfPressing();
 
@@ -69,7 +70,7 @@ struct ButtonSM {
 
 }  // namespace sm
 
-template <type::DigitalInputPin Pin, ButtonSettings S = {}>
+template <type::DigitalInputPin Pin, ButtonSettings S = ButtonSettings{}>
 class Button : public sm::ButtonSM, public Singleton<Button<Pin, S>> {
  public:
     Button() = default;
@@ -78,7 +79,7 @@ class Button : public sm::ButtonSM, public Singleton<Button<Pin, S>> {
         pin.init();
 
         if constexpr (type::InterruptPin<Pin>) {
-            pin.interrupt().attach(Button::buttonISR, interruptMode(S.level));
+            pin.interrupt().attach(interruptMode(S.level));
         }
     }
 
@@ -90,9 +91,9 @@ class Button : public sm::ButtonSM, public Singleton<Button<Pin, S>> {
         }
     }
 
- private:
     static void buttonISR() { Button::instance().isr(); }
 
+ private:
     [[no_unique_address]] const Pin pin{};
 };
 
@@ -117,5 +118,6 @@ constexpr const char* toString(ButtonEvent event) {
 
 }  // namespace platform
 
-#define PLATFORM_BUTTON_ISR(Pin, ...) \
-    template PLATFORM_ISR void ::platform::Button<Pin, ##__VA_ARGS__>::buttonISR()
+#define PLATFORM_BUTTON_ISR(Pin, ...)                                                            \
+    PLATFORM_INSTANTIATE_ISR_TEMPLATE(void ::platform::Button<Pin, ##__VA_ARGS__>::buttonISR()); \
+    PLATFORM_DEFINE_INT_VECTOR(Pin, ::platform::Button<Pin, ##__VA_ARGS__>::buttonISR)

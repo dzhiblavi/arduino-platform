@@ -1,15 +1,17 @@
 #pragma once
 
 #include "platform/Singleton.h"
+#include "platform/hal/int/vector.h"  // IWYU pragma: keep
 #include "platform/hal/pin/type.h"
 #include "platform/io/button/EncoderSettings.h"
+#include "platform/util/isr_template.h"
 
 // #define EB_NO_CALLBACK // THIS ENABLES BUGS IN THE LIBRARY
 #include <core/VirtEncoder.h>
 
 namespace platform {
 
-template <type::InterruptPin S1, type::InterruptPin S2, EncoderSettings S = {}>
+template <type::InterruptPin S1, type::InterruptPin S2, EncoderSettings S = EncoderSettings{}>
 class GyverEncoder : public VirtEncoder, public Singleton<GyverEncoder<S1, S2, S>> {
  public:
     GyverEncoder() = default;
@@ -20,15 +22,14 @@ class GyverEncoder : public VirtEncoder, public Singleton<GyverEncoder<S1, S2, S
 
         s1.init();
         s2.init();
-        s1.interrupt().attach(GyverEncoder::encISR, InterruptMode::Change);
-        s2.interrupt().attach(GyverEncoder::encISR, InterruptMode::Change);
+        s1.interrupt().attach(InterruptMode::Change);
+        s2.interrupt().attach(InterruptMode::Change);
     }
 
     void tick() { VirtEncoder::tick(); }
+    static void encoderISR() { GyverEncoder::instance().tickISR(S1().read(), S2().read()); }
 
  private:
-    static void encISR() { GyverEncoder::instance().tickISR(S1().read(), S2().read()); }
-
     static constexpr int getType(EncoderType type) {
         switch (type) {
             case Step4Low:
@@ -48,5 +49,8 @@ class GyverEncoder : public VirtEncoder, public Singleton<GyverEncoder<S1, S2, S
 
 }  // namespace platform
 
-#define PLATFORM_ENCODER_ISR(S1, S2, ...) \
-    template PLATFORM_ISR void ::platform::GyverEncoder<S1, S2, ##__VA_ARGS__>::encISR()
+#define PLATFORM_ENCODER_ISR(S1, S2, ...)                                                        \
+    PLATFORM_INSTANTIATE_ISR_TEMPLATE(                                                           \
+        void ::platform::GyverEncoder<S1, S2, ##__VA_ARGS__>::encoderISR());                     \
+    PLATFORM_DEFINE_INT_VECTOR(S1, ::platform::GyverEncoder<S1, S2, ##__VA_ARGS__>::encoderISR); \
+    PLATFORM_DEFINE_INT_VECTOR(S2, ::platform::GyverEncoder<S1, S2, ##__VA_ARGS__>::encoderISR)

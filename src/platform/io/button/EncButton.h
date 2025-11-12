@@ -75,6 +75,6 @@ class EncButton : public Encoder<S1, S2, S.encoder>, public Button<Btn, S.button
 
 }  // namespace platform
 
-#define PLATFORM_ENC_BUTTON_ISR(S1, S2, Btn, S) \
-    PLATFORM_ENCODER_ISR(S1, S2, S.encoder);    \
-    PLATFORM_BUTTON_ISR(Btn, S.button)
+#define PLATFORM_ENC_BUTTON_ISR(I1, I2, IB, S1, S2, Btn, S) \
+    PLATFORM_ENCODER_ISR(I1, I2, S1, S2, S.encoder);        \
+    PLATFORM_BUTTON_ISR(Ib, Btn, S.button)

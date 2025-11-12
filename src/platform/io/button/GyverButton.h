@@ -1,8 +1,10 @@
 #pragma once
 
 #include "platform/Singleton.h"
+#include "platform/hal/int/vector.h"  // IWYU pragma: keep
 #include "platform/hal/pin/type.h"
 #include "platform/io/button/ButtonSettings.h"
+#include "platform/util/isr_template.h"
 
 // #define EB_NO_CALLBACK // THIS ENABLES BUGS IN THE LIBRARY
 #include <core/VirtButton.h>
@@ -22,19 +24,20 @@ class GyverButton : public VirtButton, public Singleton<GyverButton<Pin, S>> {
         pin.init();
 
         if constexpr (type::InterruptPin<Pin>) {
-            pin.interrupt().attach(GyverButton::buttonISR, interruptMode(S.level));
+            pin.interrupt().attach(interruptMode(S.level));
         }
     }
 
     void tick() { VirtButton::tick(pin.read()); }
-
- private:
     static void buttonISR() { GyverButton::instance().pressISR(); }
 
+ private:
     [[no_unique_address]] const Pin pin{};
 };
 
-#define PLATFORM_BUTTON_ISR(Pin, ...) \
-    template PLATFORM_ISR void ::platform::GyverButton<Pin, ##__VA_ARGS__>::buttonISR()
+#define PLATFORM_BUTTON_ISR(Pin, ...)                                   \
+    PLATFORM_INSTANTIATE_ISR_TEMPLATE(                                  \
+        void ::platform::GyverButton<Pin, ##__VA_ARGS__>::buttonISR()); \
+    PLATFORM_DEFINE_INT_VECTOR(Pin, ::platform::GyverButton<Pin, ##__VA_ARGS__>::buttonISR)
 
 }  // namespace platform

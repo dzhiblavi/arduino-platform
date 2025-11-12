@@ -31,8 +31,8 @@ class GyverEncButton : public VirtEncButton, public Singleton<GyverEncButton<S1,
         s2.init();
         btn.init();
 
-        s1.interrupt().attach(GyverEncButton::encISR, InterruptMode::Change);
-        s2.interrupt().attach(GyverEncButton::encISR, InterruptMode::Change);
+        s1.interrupt().attach(InterruptMode::Change);
+        s2.interrupt().attach(InterruptMode::Change);
         if constexpr (type::InterruptPin<Btn>) {
             btn.interrupt().attach(GyverEncButton::btnISR, interruptMode(S.button.level));
         }
@@ -64,6 +64,6 @@ class GyverEncButton : public VirtEncButton, public Singleton<GyverEncButton<S1,
 
 }  // namespace platform
 
-#define PLATFORM_ENC_BUTTON_ISR(S1, S2, Btn, ...)                                                \
-    template PLATFORM_ISR void ::platform::GyverEncButton<S1, S2, Btn, ##__VA_ARGS__>::encISR(); \
-    template PLATFORM_ISR void ::platform::GyverEncButton<S1, S2, Btn, ##__VA_ARGS__>::btnISR()
+#define PLATFORM_ENC_BUTTON_ISR(I1, I2, IB, S1, S2, Btn, S) \
+    PLATFORM_ENCODER_ISR(I1, I2, S1, S2, S.encoder);        \
+    PLATFORM_BUTTON_ISR(Ib, Btn, S.button)

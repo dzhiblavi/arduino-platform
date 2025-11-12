@@ -1,9 +1,5 @@
 #pragma once
 
-#include "platform/sys/config.h"  // IWYU pragma: keep
-
-#if defined(PLATFORM_ARDUINO)
-
 #include "platform/hal/int/mode.h"
 
 #include <Arduino.h>
@@ -24,5 +20,3 @@ constexpr uint8_t native(InterruptMode mode) {
 }
 
 }  // namespace platform
-
-#endif

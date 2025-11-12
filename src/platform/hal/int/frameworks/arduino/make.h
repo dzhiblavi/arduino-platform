@@ -1,26 +1,15 @@
 #pragma once
 
-#include "platform/sys/config.h"  // IWYU pragma: keep
+#if defined(ARDUINO_ESP8266_WEMOS_D1MINI)
 
-#if defined(PLATFORM_ARDUINO)
+#include "platform/hal/int/frameworks/arduino/boards/d1_mini/make.h"  // IWYU pragma: keep
 
-#include "platform/hal/int/frameworks/arduino/mode.h"
+#elif defined(ARDUINO_AVR_NANO)
 
-#include "platform/hal/int/type.h"
+#include "platform/hal/int/frameworks/arduino/boards/nano/make.h"  // IWYU pragma: keep
 
-#include <Arduino.h>
+#else
 
-namespace platform {
-
-template <uint8_t IntNo>
-struct Interrupt {
-    void attach(InterruptFunc func, InterruptMode mode) const {
-        ::attachInterrupt(IntNo, func, native(mode));
-    }
-
-    void detach() const { ::detachInterrupt(IntNo); }
-};
-
-}  // namespace platform
+#error "unsupported board"
 
 #endif
