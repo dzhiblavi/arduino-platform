@@ -17,6 +17,7 @@ struct Pin {
     int adcRead() const { return Emulator::instance().analogRead(P); }
     void set() const { Emulator::instance().write(P, true); }
     void clear() const { Emulator::instance().write(P, false); }
+    void toggle() const { Emulator::instance().toggle(P); }
     uint8_t read() const { return Emulator::instance().read(P); }
     void pwm(uint8_t val) const { Emulator::instance().pwm(P, val); }
 

@@ -25,7 +25,7 @@ class Emulator {
     // Pins
     void init(Pin pin, GPIOMode mode) {
         LTRACE("[emulator] init pin=", pin, ", mode=", toString(mode));
-        pins_[pin] = {mode, 0};
+        pins_[pin].mode = mode;
     }
 
     int analogRead(Pin pin) {
@@ -43,6 +43,15 @@ class Emulator {
         DASSERT(p.mode && isOutput(*p.mode));
         p.pwm = false;
         p.value = static_cast<int>(value);
+    }
+
+    void toggle(Pin pin) {
+        auto& p = pins_[pin];
+        LTRACE("[emulator] toggle pin=", pin, ", value=", p.value);
+
+        DASSERT(p.mode && isOutput(*p.mode));
+        p.pwm = false;
+        p.value = p.value == 0;
     }
 
     uint8_t read(Pin pin) {
@@ -79,6 +88,12 @@ class Emulator {
         auto& p = pins_[pin];
         LTRACE("[emulator] emulate write pin=", pin, ", value=", value);
         p.value = value;
+    }
+
+    void togglePin(Pin pin) {
+        auto& p = pins_[pin];
+        LTRACE("[emulator] emuate toggle pin=", pin, ", value=", p.value);
+        p.value = (p.value == 0);
     }
 
     template <size_t Pin>

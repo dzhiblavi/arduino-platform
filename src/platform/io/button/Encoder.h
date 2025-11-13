@@ -42,7 +42,6 @@ struct EncoderSM {
 
     volatile uint8_t s = 0;
     volatile int8_t counter_ = 0;
-    int8_t pos = 0;  // used in ISR only
 };
 
 }  // namespace sm
