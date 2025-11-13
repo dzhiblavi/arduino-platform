@@ -16,6 +16,8 @@ enum class EncoderEvent : uint8_t {
     TurnRight,
 };
 
+constexpr const char* toString(EncoderEvent event);
+
 namespace sm {
 
 struct EncoderSM {
@@ -64,6 +66,20 @@ class Encoder : public sm::EncoderSM, public Singleton<Encoder<S1, S2, S>> {
     [[no_unique_address]] const S1 s1{};
     [[no_unique_address]] const S2 s2{};
 };
+
+constexpr const char* toString(EncoderEvent event) {
+    switch (event) {
+        case EncoderEvent::None:
+            return "None";
+        case EncoderEvent::TurnLeft:
+            return "TurnLeft";
+        case EncoderEvent::TurnRight:
+            return "TurnRight";
+            break;
+    }
+
+    __builtin_unreachable();
+}
 
 }  // namespace platform
 

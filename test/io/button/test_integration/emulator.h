@@ -6,7 +6,7 @@
 
 using namespace platform;
 
-using ControlPin = D9::Output<GPIOMode::Output>;
+using ControlPin = D8::Output<GPIOMode::Output>;
 
 struct Emulator {
     Emulator(t::Step* steps, size_t num_steps) : steps{steps}, num_steps{num_steps} {}
