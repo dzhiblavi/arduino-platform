@@ -1,14 +1,11 @@
 #pragma once
 
-#include "platform/hal/int/vector.h"
-
 #include <Arduino.h>
 
 namespace platform::detail {
 
-template <size_t>
+template <size_t N>
 void _vector() {
-    // undefined pin
     abort();
 }
 

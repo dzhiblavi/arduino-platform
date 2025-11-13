@@ -4,11 +4,11 @@
 
 #if defined(PLATFORM_ARDUINO)
 
-#include "platform/hal/int/frameworks/arduino/make.h"
 #include "platform/hal/int/type.h"
+#include "platform/hal/pin/capability.h"
 #include "platform/hal/pin/frameworks/arduino/mode.h"
 
-#include "platform/hal/pin/capability.h"
+#include "platform/hal/int/frameworks/arduino/boards/nano/make.h"
 
 #include <supp/verify.h>
 
