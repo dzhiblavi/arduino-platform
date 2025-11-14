@@ -23,7 +23,7 @@ struct Emulator {
     }
 
     void doBounce() {
-        bounces = 6;
+        bounces = 2;
         timer = millis();
         state = Bouncing;
         LINFO("[emulator] bounce (pin toggle)");
@@ -31,7 +31,7 @@ struct Emulator {
     }
 
     void bounceResume() {
-        if (millis() - timer < 5) {
+        if (millis() - timer < 2) {
             return;
         }
 

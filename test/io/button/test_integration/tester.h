@@ -6,7 +6,12 @@
 
 using namespace platform;
 
-constexpr auto settings = ButtonSettings{};
+constexpr auto settings = ButtonSettings{
+    .hold_ms = 50,
+    .timeout_ms = 50,
+    .debounce_ms = 8,
+};
+
 using ButtonPin = D2::Input<GPIOMode::Input>;
 PLATFORM_BUTTON_ISR(ButtonPin, settings);
 
