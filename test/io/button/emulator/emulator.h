@@ -95,7 +95,7 @@ struct Emulator {
     }
 
     // returns true if should continue
-    bool loop() {
+    __attribute__((noinline)) bool loop() {
         switch (state) {
             case Ready:
                 if (index < num_steps) {
