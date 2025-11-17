@@ -75,7 +75,6 @@ constexpr const char* toString(EncoderEvent event) {
             return "TurnLeft";
         case EncoderEvent::TurnRight:
             return "TurnRight";
-            break;
     }
 
     __builtin_unreachable();
