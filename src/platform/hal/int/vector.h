@@ -12,9 +12,9 @@ void _vector();
 
 }  // namespace platform::detail
 
-#define PLATFORM_DEFINE_INT_VECTOR(Pin, ...)                                      \
-    template <>                                                                   \
-    PLATFORM_RAM void ::platform::detail::_vector<Pin().interrupt().number()>() { \
-        __VA_ARGS__();                                                            \
-    }                                                                             \
+#define PLATFORM_DEFINE_INT_VECTOR(Pin, ...)                                 \
+    template <>                                                              \
+    PLATFORM_ISR ::platform::detail::_vector<Pin().interrupt().number()>() { \
+        __VA_ARGS__();                                                       \
+    }                                                                        \
     static_assert(true)

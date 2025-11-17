@@ -59,7 +59,7 @@ EncoderEvent EncoderSM::event() const {
     return EncoderEvent::None;
 }
 
-PLATFORM_RAM void EncoderSM::tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e) {
+PLATFORM_ISR EncoderSM::tickISR(uint8_t e0, uint8_t e1, const EncoderSettings& e) {
     const int8_t res = poll(e0, e1, e);
     if (res == 0) {
         return;

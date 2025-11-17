@@ -1,3 +1,7 @@
+#include <utest/utest.h>
+
+#if defined(PLATFORM_NATIVE)
+
 #include "Executor.h"
 #include "io/stream/TestPrint.h"
 
@@ -11,8 +15,6 @@
 #include <exec/os/Service.h>
 
 #include <supp/CircularBuffer.h>
-
-#include <utest/utest.h>
 
 namespace platform {
 
@@ -186,5 +188,7 @@ TEST_F(t_write, test_with_timeout_succeeded) {
 }
 
 }  // namespace platform
+
+#endif
 
 TESTS_MAIN

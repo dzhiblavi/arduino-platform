@@ -1,3 +1,7 @@
+#include <utest/utest.h>
+
+#if defined(PLATFORM_NATIVE)
+
 #include "Executor.h"
 #include "io/stream/TestStream.h"
 
@@ -13,8 +17,6 @@
 
 #include <supp/CircularBuffer.h>
 #include <time/mono.h>
-
-#include <utest/utest.h>
 
 namespace platform {
 
@@ -176,5 +178,7 @@ TEST_F(t_read, test_with_timeout_succeeded) {
 }
 
 }  // namespace platform
+
+#endif
 
 TESTS_MAIN

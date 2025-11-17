@@ -6,7 +6,7 @@
 #define PLATFORM_ARDUINO_AVR
 
 #define PLATFORM_RAM
-#define PLATFORM_ISR
+#define PLATFORM_ISR void
 
 #elif defined(ARDUINO_ARCH_ESP8266)
 
@@ -16,12 +16,12 @@
 #define PLATFORM_ARDUINO_ESP8266
 
 #define PLATFORM_RAM IRAM_ATTR
-#define PLATFORM_ISR PLATFORM_RAM
+#define PLATFORM_ISR PLATFORM_RAM void
 
 #else
 
 #define PLATFORM_NATIVE
 #define PLATFORM_RAM
-#define PLATFORM_ISR
+#define PLATFORM_ISR void
 
 #endif

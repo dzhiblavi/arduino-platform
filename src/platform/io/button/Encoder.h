@@ -82,8 +82,7 @@ constexpr const char* toString(EncoderEvent event) {
 
 }  // namespace platform
 
-#define PLATFORM_ENCODER_ISR(S1, S2, ...)                                                   \
-    PLATFORM_INSTANTIATE_ISR_TEMPLATE(                                                      \
-        void ::platform::Encoder<S1, S2, ##__VA_ARGS__>::encoderISR());                     \
-    PLATFORM_DEFINE_INT_VECTOR(S1, ::platform::Encoder<S1, S2, ##__VA_ARGS__>::encoderISR); \
+#define PLATFORM_ENCODER_ISR(S1, S2, ...)                                                        \
+    PLATFORM_INSTANTIATE_ISR_TEMPLATE(::platform::Encoder<S1, S2, ##__VA_ARGS__>::encoderISR()); \
+    PLATFORM_DEFINE_INT_VECTOR(S1, ::platform::Encoder<S1, S2, ##__VA_ARGS__>::encoderISR);      \
     PLATFORM_DEFINE_INT_VECTOR(S2, ::platform::Encoder<S1, S2, ##__VA_ARGS__>::encoderISR)

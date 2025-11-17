@@ -39,7 +39,7 @@ struct ButtonSM {
 
  protected:
     void poll(bool engaged, const ButtonSettings& settings);
-    SUPP_INLINE PLATFORM_RAM void isr() { state_ = State(state_ | ISRMask); }
+    SUPP_INLINE PLATFORM_ISR isr() { state_ = State(state_ | ISRMask); }
 
  private:
     // clang-format off
@@ -271,6 +271,6 @@ void ButtonSM::suspendIfPressing() {
 
 }  // namespace platform
 
-#define PLATFORM_BUTTON_ISR(Pin, ...)                                                            \
-    PLATFORM_INSTANTIATE_ISR_TEMPLATE(void ::platform::Button<Pin, ##__VA_ARGS__>::buttonISR()); \
+#define PLATFORM_BUTTON_ISR(Pin, ...)                                                       \
+    PLATFORM_INSTANTIATE_ISR_TEMPLATE(::platform::Button<Pin, ##__VA_ARGS__>::buttonISR()); \
     PLATFORM_DEFINE_INT_VECTOR(Pin, ::platform::Button<Pin, ##__VA_ARGS__>::buttonISR)

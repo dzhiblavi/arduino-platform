@@ -35,9 +35,8 @@ class GyverButton : public VirtButton, public Singleton<GyverButton<Pin, S>> {
     [[no_unique_address]] const Pin pin{};
 };
 
-#define PLATFORM_GYVER_BUTTON_ISR(Pin, ...)                                   \
-    PLATFORM_INSTANTIATE_ISR_TEMPLATE(                                  \
-        void ::platform::GyverButton<Pin, ##__VA_ARGS__>::buttonISR()); \
+#define PLATFORM_GYVER_BUTTON_ISR(Pin, ...)                                                      \
+    PLATFORM_INSTANTIATE_ISR_TEMPLATE(::platform::GyverButton<Pin, ##__VA_ARGS__>::buttonISR()); \
     PLATFORM_DEFINE_INT_VECTOR(Pin, ::platform::GyverButton<Pin, ##__VA_ARGS__>::buttonISR)
 
 }  // namespace platform
