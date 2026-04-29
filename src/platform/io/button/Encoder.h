@@ -35,8 +35,6 @@ struct EncoderSM {
     int8_t poll(uint8_t e0, uint8_t e1, const EncoderSettings& s);
 
     enum : uint8_t {
-        P0 = 1 << 0,
-        P1 = 1 << 1,
         Turn = 1 << 2,
         Isr = 1 << 3,
         Dir = 1 << 4,
@@ -44,6 +42,9 @@ struct EncoderSM {
 
     volatile uint8_t s = 0;
     volatile int8_t counter_ = 0;
+    volatile int8_t p0 : 2 = 0;
+    volatile int8_t p1 : 2 = 0;
+    volatile int8_t epos : 4 = 0;
 };
 
 }  // namespace sm

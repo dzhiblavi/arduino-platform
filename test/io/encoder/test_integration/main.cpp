@@ -1,7 +1,9 @@
+#include <utest/utest.h>
+
+#if defined(PLATFORM_ARDUINO)
+
 #include "emulator.h"
 #include "tester.h"
-
-#include <utest/utest.h>
 
 using namespace platform;
 
@@ -58,6 +60,8 @@ TEST(rotate_mixed) {
         t::right(-4));
 }
 
-TESTS_MAIN
-
 #include <platform/hal/int/instantiate_vectors.h>
+
+#endif
+
+TESTS_MAIN

@@ -1,7 +1,8 @@
+#include <utest/utest.h>
+
+#if defined(PLATFORM_ARDUINO)
 #include "io/button/emulator/emulator.h"
 #include "tester.h"
-
-#include <utest/utest.h>
 
 using namespace platform;
 
@@ -126,6 +127,8 @@ TEST(unsuspend_hold) {
         t::delay(0, 70, ButtonEvent::Timeout));
 }
 
-TESTS_MAIN
-
 #include <platform/hal/int/instantiate_vectors.h>
+
+#endif
+
+TESTS_MAIN

@@ -21,6 +21,8 @@ struct t_encoder {
     t_encoder() {
         b.init();
         ttime::mono::set(ttime::Time(0));
+        e.writePin(1, 1);
+        e.writePin(2, 1);
     }
 
     ~t_encoder() { TEST_ASSERT_EQUAL(EncoderEvent::None, event); }
@@ -48,17 +50,17 @@ struct t_encoder {
     }
 
     void right() {
-        toggle1();
         toggle2();
         toggle1();
         toggle2();
+        toggle1();
     }
 
     void left() {
-        toggle2();
         toggle1();
         toggle2();
         toggle1();
+        toggle2();
     }
 
     const int pin = 1;

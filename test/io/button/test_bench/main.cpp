@@ -1,3 +1,6 @@
+#include <utest/utest.h>
+
+#if defined(PLATFORM_ARDUINO)
 #define LOGGING_DISABLED
 
 #include "io/button/emulator/emulator.h"
@@ -9,7 +12,6 @@
 #include <bench/Histogram.h>
 #include <bench/bench.h>
 
-#include <utest/utest.h>
 
 using namespace platform;
 
@@ -97,6 +99,8 @@ TEST(benchmark_click) {
     runBenchmark(t::press(0), t::delay(0, 5), t::release(1, ButtonEvent::Clicked), t::delay(1, 5));
 }
 
-TESTS_MAIN
-
 #include <platform/hal/int/instantiate_vectors.h>
+
+#endif
+
+TESTS_MAIN

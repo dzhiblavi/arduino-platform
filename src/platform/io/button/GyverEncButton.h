@@ -3,6 +3,7 @@
 #include "platform/Singleton.h"
 #include "platform/hal/pin/type.h"
 #include "platform/io/button/EncButtonSettings.h"
+#include "platform/util/isr_template.h"
 
 // #define EB_NO_CALLBACK // THIS ENABLES BUGS IN THE LIBRARY
 #include <core/VirtEncButton.h>
@@ -40,10 +41,10 @@ class GyverEncButton : public VirtEncButton, public Singleton<GyverEncButton<S1,
 
     void tick() { VirtEncButton::tick(btn.read()); }
 
- private:
     static void encISR() { GyverEncButton::instance().tickISR(S1().read(), S2().read()); }
     static void btnISR() { GyverEncButton::instance().pressISR(); }
 
+ private:
     static constexpr int getType(EncoderType type) {
         switch (type) {
             case Step4Low:
@@ -64,6 +65,13 @@ class GyverEncButton : public VirtEncButton, public Singleton<GyverEncButton<S1,
 
 }  // namespace platform
 
-#define PLATFORM_ENC_BUTTON_ISR(I1, I2, IB, S1, S2, Btn, S) \
-    PLATFORM_ENCODER_ISR(I1, I2, S1, S2, S.encoder);        \
-    PLATFORM_BUTTON_ISR(Ib, Btn, S.button)
+//#define PLATFORM_GYVER_ENC_BUTTON_ISR(S1, S2, Btn, S) \
+    //PLATFORM_GYVER_ENCODER_ISR(S1, S2, S.encoder);    \
+    //PLATFORM_GYVER_BUTTON_ISR(Btn, S.button)
+
+#define PLATFORM_GYVER_ENC_BUTTON_ENCODER_ISR(S1, S2, Btn, ...)              \
+    PLATFORM_INSTANTIATE_ISR_TEMPLATE(                                       \
+        ::platform::GyverEncButton<S1, S2, Btn, ##__VA_ARGS__>::encISR());   \
+    PLATFORM_DEFINE_INT_VECTOR(                                              \
+        S1, ::platform::GyverEncButton<S1, S2, Btn, ##__VA_ARGS__>::encISR); \
+    PLATFORM_DEFINE_INT_VECTOR(S2, ::platform::GyverEncButton<S1, S2, Btn, ##__VA_ARGS__>::encISR)
